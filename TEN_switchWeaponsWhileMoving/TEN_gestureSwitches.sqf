@@ -1,34 +1,34 @@
 if(isDedicated) exitWith {};
 
-// Set up the key handler
-waitUntil {!isNull findDisplay 46};
 player setVariable ["TEN_canSwitch", true];
-
-(findDisplay 46) displayAddEventHandler ["KeyDown", "_this call TEN_keyHandler"];
-(findDisplay 46) displayAddEventHandler ["MouseButtonDown", "_this call TEN_keyHandler"];
 
 // Listens for the calls to "User17" and "User18" actions and applies our logic
 TEN_keyHandler = {
- 	private ["_canSwitch", "_toHandgun", "_toLauncher", "_isKey", "_isSwitch", "_stance", "_type"];
+	private ["_canSwitch", "_toHandgun", "_toLauncher", "_isSwitch", "_stance", "_type"];
 
- 	_toHandgun = inputaction "User17";
-	_toLauncher = inputaction "User18";
- 	_isKey = (_toHandgun > 0 or _toLauncher > 0);
- 	_stance = stance player;
+	while {true} do {
 
- 	// Only override if we're pressing the right key combo and are in the right stance
- 	_isSwitch = if(_isKey && (_stance == "STAND" or _stance == "CROUCH")) then {true} else {false};
- 	_canSwitch = player getVariable "TEN_canSwitch";
- 	
- 	// Only change stances on the move if we're overriding the default and no other transition is in progress
- 	if(_isSwitch && _canSwitch) then {
-		player setVariable ["TEN_canSwitch", false];
-		_type = if(_toHandgun > 0) then {"handgun"} else {"launcher"};
-		_type call TEN_determineSwitch;
+		// Listen for the input actions
+		waitUntil {
+			_toHandgun = inputaction "User17";
+			_toLauncher = inputaction "User18";
+			(_toHandgun > 0 or _toLauncher > 0);
+		};
+
+		// Only override if we're pressing the right key combo and are in the right stance
+		_stance = stance player;
+		_isSwitch = if(_stance == "STAND" or _stance == "CROUCH") then {true} else {false};
+		_canSwitch = player getVariable "TEN_canSwitch";
+		
+		// Only change stances on the move if we're overriding the default and no other transition is in progress
+		if(_isSwitch && _canSwitch) then {
+			player setVariable ["TEN_canSwitch", false];
+			_type = if(_toHandgun > 0) then {"handgun"} else {"launcher"};
+			_type call TEN_determineSwitch;
+		};
+
+		sleep 0.3;
 	};
-
-	// Don't override the keys, causes player to stop with majority of key combos :(
-	false; 
 	
 };
 
@@ -101,3 +101,6 @@ TEN_performSwitch = {
 	player playActionNow _endGesture;
 	player setVariable ["TEN_canSwitch", true];
 };
+
+// Start spyin' on dem keys harder than certain government agencies
+[] spawn TEN_keyHandler;
