@@ -3,29 +3,32 @@ if(isDedicated) exitWith {};
 // Set up the key handler
 waitUntil {!isNull findDisplay 46};
 player setVariable ["TEN_canSwitch", true];
+
 (findDisplay 46) displayAddEventHandler ["KeyDown", "_this call TEN_keyHandler"];
+(findDisplay 46) displayAddEventHandler ["MouseButtonDown", "_this call TEN_keyHandler"];
 
-// Intercepts the calls to "handgun" and "switchWeapon" actions and applies our own logic
+// Listens for the calls to "User17" and "User18" actions and applies our logic
 TEN_keyHandler = {
- 	private ["_canSwitch", "_toHandgun", "_toLauncher", "_isKey", "_isOverride", "_stance", "_type"];
+ 	private ["_canSwitch", "_toHandgun", "_toLauncher", "_isKey", "_isSwitch", "_stance", "_type"];
 
- 	_toHandgun = inputaction "handgun";
-	_toLauncher = inputaction "switchWeapon";
+ 	_toHandgun = inputaction "User17";
+	_toLauncher = inputaction "User18";
  	_isKey = (_toHandgun > 0 or _toLauncher > 0);
  	_stance = stance player;
 
  	// Only override if we're pressing the right key combo and are in the right stance
- 	_isOverride = if(_isKey && (_stance == "STAND" or _stance == "CROUCH")) then {true} else {false};
+ 	_isSwitch = if(_isKey && (_stance == "STAND" or _stance == "CROUCH")) then {true} else {false};
  	_canSwitch = player getVariable "TEN_canSwitch";
  	
  	// Only change stances on the move if we're overriding the default and no other transition is in progress
- 	if(_isOverride && _canSwitch) then {
+ 	if(_isSwitch && _canSwitch) then {
 		player setVariable ["TEN_canSwitch", false];
 		_type = if(_toHandgun > 0) then {"handgun"} else {"launcher"};
 		_type call TEN_determineSwitch;
 	};
 
-	_isOverride;
+	// Don't override the keys, causes player to stop with majority of key combos :(
+	false; 
 	
 };
 
@@ -37,7 +40,6 @@ TEN_determineSwitch = {
 	_handgun = handgunWeapon player;
 	_rifle = primaryWeapon player;
 	_launcher = secondaryWeapon player;
-	_switchDirection = [];
 
 	// Possible transitions and their metadata
 	// Array contains: Start gesture, end gesture, end gesture delay, next weapon, default cancelling crouch animation
@@ -48,13 +50,15 @@ TEN_determineSwitch = {
 	_launcherToHandgun = ["TEN_GestureStandingLauncherPistolSwitch","TEN_GestureStandingLauncherPistolSwitchEnd", 1,   _handgun,  "amovpknlmstpsraswpstdnon"];
 	_launcherToRifle   = ["TEN_GestureStandingLauncherRifleSwitch", "TEN_GestureStandingLauncherRifleSwitchEnd",  1,   _rifle,    "amovpknlmstpsraswrfldnon"];
 
-	// Decide which transition we need
-	if(_currentWeapon == _rifle    && _type == "handgun" ) then { _switchDirection = _rifleToHandgun;   };
-	if(_currentWeapon == _rifle    && _type == "launcher") then { _switchDirection = _rifleToLauncher;  };
-	if(_currentWeapon == _handgun  && _type == "handgun" ) then { _switchDirection = _handgunToRifle;   };
-	if(_currentWeapon == _handgun  && _type == "launcher") then { _switchDirection = _handgunToLauncher;};
-	if(_currentWeapon == _launcher && _type == "handgun" ) then { _switchDirection = _launcherToHandgun;};
-	if(_currentWeapon == _launcher && _type == "launcher") then { _switchDirection = _launcherToRifle;  };
+	switch true do {
+		case (_currentWeapon == _rifle    && _type == "handgun" ) : { _switchDirection = _rifleToHandgun;   };
+		case (_currentWeapon == _rifle    && _type == "launcher") : { _switchDirection = _rifleToLauncher;  };
+		case (_currentWeapon == _handgun  && _type == "handgun" ) : { _switchDirection = _handgunToRifle;   };
+		case (_currentWeapon == _handgun  && _type == "launcher") : { _switchDirection = _handgunToLauncher;};
+		case (_currentWeapon == _launcher && _type == "handgun" ) : { _switchDirection = _launcherToHandgun;};
+		case (_currentWeapon == _launcher && _type == "launcher") : { _switchDirection = _launcherToRifle;  };
+		default { _switchDirection = [] };
+	};
 
 	_nextWeapon = _switchDirection select 3;
 

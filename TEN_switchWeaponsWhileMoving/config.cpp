@@ -4,7 +4,7 @@ class CfgPatches {
 		units[] = {};
 		weapons[] = {};
 		requiredAddons[] = {};
-		version = "1.0";
+		version = "1.1";
 		author[]= {"Sniperwolf572"};
 		authorUrl = "https://twitter.com/tenga6";
 	};
@@ -12,7 +12,7 @@ class CfgPatches {
 };
 
 class Extended_PostInit_EventHandlers {
-	TEN_switchWeaponsWhileMoving_PostInit = "if(!isDedicated) then {[] execVM '\TEN_switchWeaponsWhileMoving\TEN_gestureSwitches.sqf'}";
+	TEN_switchWeaponsWhileMoving_PostInit = "if(!isDedicated) then {[] execVM 'x\TEN\addons\TEN_switchWeaponsWhileMoving\TEN_gestureSwitches.sqf'}";
 };
 
 class CfgMovesBasic {
