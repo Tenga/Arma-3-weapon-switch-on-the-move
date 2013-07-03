@@ -17,7 +17,7 @@ TEN_keyHandler = {
 
 		// Only override if we're pressing the right key combo and are in the right stance
 		_stance = stance player;
-		_isSwitch = if(_stance == "STAND" or _stance == "CROUCH") then {true} else {false};
+		_isSwitch = if(_stance == "STAND" or _stance == "CROUCH" or _stance == "PRONE") then {true} else {false};
 		_canSwitch = player getVariable "TEN_canSwitch";
 		
 		// Only change stances on the move if we're overriding the default and no other transition is in progress
@@ -71,34 +71,53 @@ TEN_determineSwitch = {
 };
 
 TEN_performSwitch = {
-	private ["_startGesture", "_endGesture", "_delay", "_cancellingCrouch", "_switchMove", "_stance", "_launcher"];
-
-	// Map the input array to some sane variable names
-	_startGesture = _this select 0;
-	_endGesture = _this select 1;
-	_delay = _this select 2;
-	_nextWeapon = _this select 3;
-	_cancellingCrouch = _this select 4;
-	_launcher = secondaryWeapon player;
-	_switchMove = "";
-
-	// Switching logic
-	player playActionNow _startGesture;
-
-	sleep _delay;
+	private ["_startGesture", "_endGesture", "_delay", "_cancellingCrouch", "_switchMove", "_stance", "_rifle", "_launcher"];
 
 	_stance = stance player;
+	_nextWeapon = _this select 3;
+	_rifle = primaryWeapon player;
+	
+	// If the player is prone, do the regular weapon switch	
+	if(_stance == "PRONE") then {
 
-	// Switchmoving to "" when the launcher is selected, repeats the transition
-	if(_nextWeapon == _launcher) then { _switchMove = "amovpercmstpsraswlnrdnon";};
+		// Apparently switching from handgun to rifle plays no animations, yay
+		if(_nextWeapon == _rifle) then {
+			player switchMove "amovppnemstpsraswpstdnon_amovppnemstpsraswrfldnon";
+		};
 
-	// Use the crouching default animation if we're crouching, switchmoving to "" will stand us up
-	if(_stance == "CROUCH") then { _switchMove = _cancellingCrouch;};
+		player selectWeapon _nextWeapon;
+		
 
-	// And finalise the switch
-	player selectWeapon _nextWeapon;
-	player switchMove _switchMove;
-	player playActionNow _endGesture;
+	} else {
+
+		// If he's not laying on the floor being a lazy bum, he can switch weapons via gestures
+		_startGesture = _this select 0;
+		_endGesture = _this select 1;
+		_delay = _this select 2;
+		_cancellingCrouch = _this select 4;
+		_launcher = secondaryWeapon player;
+		_switchMove = "";
+
+		// Switching logic
+		player playActionNow _startGesture;
+
+		sleep _delay;
+
+		// We need to know the stance again after the delay in case it changed
+		_stance = stance player;
+
+		// Switchmoving to "" when the launcher is selected, repeats the transition
+		if(_nextWeapon == _launcher) then { _switchMove = "amovpercmstpsraswlnrdnon";};
+
+		// Use the crouching default animation if we're crouching, switchmoving to "" will stand us up
+		if(_stance == "CROUCH") then { _switchMove = _cancellingCrouch;};
+
+		// And finalise the switch
+		player selectWeapon _nextWeapon;
+		player switchMove _switchMove;
+		player playActionNow _endGesture;
+	};
+
 	player setVariable ["TEN_canSwitch", true];
 };
 
