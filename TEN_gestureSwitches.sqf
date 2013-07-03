@@ -12,16 +12,16 @@ TEN_keyHandler = {
 		waitUntil {
 			_toHandgun = inputaction "User17";
 			_toLauncher = inputaction "User18";
-			(_toHandgun > 0 or _toLauncher > 0);
+			(_toHandgun > 0 or {_toLauncher > 0});
 		};
 
 		// Only override if we're pressing the right key combo and are in the right stance
 		_stance = stance player;
-		_isSwitch = if(_stance == "STAND" or _stance == "CROUCH" or _stance == "PRONE") then {true} else {false};
+		_isSwitch = if(_stance == "STAND" or {_stance == "CROUCH"} or {_stance == "PRONE"}) then {true} else {false};
 		_canSwitch = player getVariable "TEN_canSwitch";
 		
 		// Only change stances on the move if we're overriding the default and no other transition is in progress
-		if(_isSwitch && _canSwitch) then {
+		if(_isSwitch && {_canSwitch}) then {
 			player setVariable ["TEN_canSwitch", false];
 			_type = if(_toHandgun > 0) then {"handgun"} else {"launcher"};
 			_type call TEN_determineSwitch;
@@ -51,12 +51,12 @@ TEN_determineSwitch = {
 	_launcherToRifle   = ["TEN_GestureStandingLauncherRifleSwitch", "TEN_GestureStandingLauncherRifleSwitchEnd",  1,   _rifle,    "amovpknlmstpsraswrfldnon"];
 
 	switch true do {
-		case (_currentWeapon == _rifle    && _type == "handgun" ) : { _switchDirection = _rifleToHandgun;   };
-		case (_currentWeapon == _rifle    && _type == "launcher") : { _switchDirection = _rifleToLauncher;  };
-		case (_currentWeapon == _handgun  && _type == "handgun" ) : { _switchDirection = _handgunToRifle;   };
-		case (_currentWeapon == _handgun  && _type == "launcher") : { _switchDirection = _handgunToLauncher;};
-		case (_currentWeapon == _launcher && _type == "handgun" ) : { _switchDirection = _launcherToHandgun;};
-		case (_currentWeapon == _launcher && _type == "launcher") : { _switchDirection = _launcherToRifle;  };
+		case (_currentWeapon == _rifle    && { _type == "handgun" }) : { _switchDirection = _rifleToHandgun;   };
+		case (_currentWeapon == _rifle    && { _type == "launcher"}) : { _switchDirection = _rifleToLauncher;  };
+		case (_currentWeapon == _handgun  && { _type == "handgun" }) : { _switchDirection = _handgunToRifle;   };
+		case (_currentWeapon == _handgun  && { _type == "launcher"}) : { _switchDirection = _handgunToLauncher;};
+		case (_currentWeapon == _launcher && { _type == "handgun" }) : { _switchDirection = _launcherToHandgun;};
+		case (_currentWeapon == _launcher && { _type == "launcher"}) : { _switchDirection = _launcherToRifle;  };
 		default { _switchDirection = [] };
 	};
 
