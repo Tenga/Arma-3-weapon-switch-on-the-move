@@ -82,7 +82,7 @@ TEN_performSwitch = {
 
 		// Apparently switching from handgun to rifle plays no animations, yay
 		if(_nextWeapon == _rifle) then {
-			player switchMove "amovppnemstpsraswpstdnon_amovppnemstpsraswrfldnon";
+			player playMoveNow "amovppnemstpsraswpstdnon_amovppnemstpsraswrfldnon";
 		};
 
 		player selectWeapon _nextWeapon;
