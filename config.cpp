@@ -4,7 +4,7 @@ class CfgPatches {
 		units[] = {};
 		weapons[] = {};
 		requiredAddons[] = {};
-		version = "1.2";
+		version = "1.3";
 		author[]= {"Sniperwolf572"};
 		authorUrl = "https://twitter.com/tenga6";
 	};
