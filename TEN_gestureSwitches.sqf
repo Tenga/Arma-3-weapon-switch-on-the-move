@@ -2,7 +2,7 @@ if(isDedicated) exitWith {};
 
 // Listens for the calls to "User17" and "User18" actions and applies our logic
 TEN_keyHandler = {
-	private ["_unit", "_canSwitch", "_toHandgun", "_toLauncher", "_isSwitch", "_stance", "_type"];
+	private ["_toHandgun", "_toLauncher", "_unit", "_canSwitch", "_stance", "_isSwitch", "_type"];
 
 	while {true} do {
 
@@ -39,7 +39,7 @@ TEN_keyHandler = {
 };
 
 TEN_determineSwitch = {
-	private ["_unit", "_type", "_currentWeapon", "_handgun", "_rifle", "_launcher", "_switchDirection", "_rifleToHandgun", "_handgunToRifle", "_launcherToHandgun", "_nextWeapon"];
+	private ["_unit", "_type", "_currentWeapon", "_handgun", "_rifle", "_launcher", "_performingSwitch", "_rifleToHandgun", "_rifleToLauncher", "_handgunToRifle", "_handgunToLauncher", "_launcherToHandgun", "_launcherToRifle", "_switchDirection", "_nextWeapon"];
 
 	_unit = _this select 0;
 	_type = _this select 1;
@@ -47,6 +47,7 @@ TEN_determineSwitch = {
 	_handgun = handgunWeapon _unit;
 	_rifle = primaryWeapon _unit;
 	_launcher = secondaryWeapon _unit;
+	_performingSwitch = false;
 
 	// Possible transitions and their metadata
 	// Array contains: Start gesture, end gesture, end gesture delay, next weapon, default cancelling crouch animation
@@ -64,21 +65,26 @@ TEN_determineSwitch = {
 		case (_currentWeapon == _handgun  && { _type == "launcher"}) : { _switchDirection = _handgunToLauncher;};
 		case (_currentWeapon == _launcher && { _type == "handgun" }) : { _switchDirection = _launcherToHandgun;};
 		case (_currentWeapon == _launcher && { _type == "launcher"}) : { _switchDirection = _launcherToRifle;  };
-		default { _switchDirection = [] };
 	};
 
-	_nextWeapon = _switchDirection select 3;
+	if(!isNil "_switchDirection") then {
+		_nextWeapon = _switchDirection select 3;
 
-	// Proceed if we have the next weapon, otherwise let the player try again
-	if(_nextWeapon != "") then {
-		[_unit, _switchDirection] spawn TEN_performSwitch;
-	} else {
+		// Proceed if we have the next weapon, otherwise let the player try again
+		if(_nextWeapon != "") then {
+			[_unit, _switchDirection] spawn TEN_performSwitch;
+			_performingSwitch = true;
+		};
+
+	};
+
+	if(!_performingSwitch) then {
 		_unit setVariable ["TEN_canSwitch", true];
 	};
 };
 
 TEN_performSwitch = {
-	private ["_unit", "_switchData", "_startGesture", "_endGesture", "_delay", "_cancellingCrouch", "_switchMove", "_stance", "_rifle", "_launcher"];
+	private ["_unit", "_switchData", "_stance", "_nextWeapon", "_rifle", "_startGesture", "_endGesture", "_delay", "_cancellingCrouch", "_launcher", "_switchMove"];
 
 	_unit = _this select 0;
 	_switchData = _this select 1;
