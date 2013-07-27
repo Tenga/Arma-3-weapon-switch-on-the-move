@@ -4,56 +4,56 @@ class CfgPatches {
 		units[] = {};
 		weapons[] = {};
 		requiredAddons[] = {};
-		version = "1.4.1";
-		author[]= {"Sniperwolf572"};
+		version = "1.4.2";
+		author[]= {"Sniperwolf572", "Deadfast"};
 		authorUrl = "https://twitter.com/tenga6";
 	};
 
 };
 
-class Extended_PostInit_EventHandlers {
-	TEN_switchWeaponsWhileMoving_PostInit = "if(!isDedicated) then {[] execVM 'x\TEN\addons\TEN_switchWeaponsWhileMoving\TEN_gestureSwitches.sqf'}";
+class CfgFunctions
+{
+	class TEN
+	{
+		tag = "TEN";
+
+		class switchWeaponsWhileMoving
+		{
+			file = "x\TEN\addons\TEN_switchWeaponsWhileMoving\fnc";
+			
+			class wpnSwitch_keyHandler
+			{
+			};
+			class wpnSwitch_determineSwitch
+			{
+			};
+			class wpnSwitch_performSwitch
+			{
+			};
+			class wpnSwitch_init
+			{
+				postInit = 1;
+			};
+		};
+	};
 };
 
 class CfgMovesBasic {
 
-	class DefaultDie;
-
 	class ManActions {
+		TEN_GestureStandingRiflePistolSwitch[]    = {"TEN_GestureStandingRiflePistolSwitch","Gesture"};
+		TEN_GestureStandingRifleLauncherSwitch[]  = {"TEN_GestureStandingRifleLauncherSwitch","Gesture"};
+		TEN_GestureStandingPistolRifleSwitch[]    = {"TEN_GestureStandingPistolRifleSwitch","Gesture"};
+		TEN_GestureStandingPistolLauncherSwitch[] = {"TEN_GestureStandingPistolLauncherSwitch","Gesture"};
+		TEN_GestureStandingLauncherRifleSwitch[]  = {"TEN_GestureStandingLauncherRifleSwitch","Gesture"};
+		TEN_GestureStandingLauncherPistolSwitch[] = {"TEN_GestureStandingLauncherPistolSwitch","Gesture"};
 
-		TEN_GestureStandingRiflePistolSwitch = "TEN_GestureStandingRiflePistolSwitch";
-		TEN_GestureStandingRifleLauncherSwitch = "TEN_GestureStandingRifleLauncherSwitch";
-		TEN_GestureStandingPistolRifleSwitch = "TEN_GestureStandingPistolRifleSwitch";
-		TEN_GestureStandingPistolLauncherSwitch = "TEN_GestureStandingPistolLauncherSwitch";
-		TEN_GestureStandingLauncherRifleSwitch = "TEN_GestureStandingLauncherRifleSwitch";
-		TEN_GestureStandingLauncherPistolSwitch = "TEN_GestureStandingLauncherPistolSwitch";
-
-		TEN_GestureStandingRiflePistolSwitchEnd = "TEN_GestureStandingRiflePistolSwitchEnd";
-		TEN_GestureStandingRifleLauncherSwitchEnd = "TEN_GestureStandingRifleLauncherSwitchEnd";
-		TEN_GestureStandingPistolRifleSwitchEnd = "TEN_GestureStandingPistolRifleSwitchEnd";
-		TEN_GestureStandingPistolLauncherSwitchEnd = "TEN_GestureStandingPistolLauncherSwitchEnd";
-		TEN_GestureStandingLauncherRifleSwitchEnd = "TEN_GestureStandingLauncherRifleSwitchEnd";
-		TEN_GestureStandingLauncherPistolSwitchEnd = "TEN_GestureStandingLauncherPistolSwitchEnd";
-	};
-
-	class Actions {
-
-		class NoActions {
-			TEN_GestureStandingRiflePistolSwitch[] = {"TEN_GestureStandingRiflePistolSwitch","Gesture"};
-			TEN_GestureStandingRifleLauncherSwitch[] = {"TEN_GestureStandingRifleLauncherSwitch","Gesture"};
-			TEN_GestureStandingPistolRifleSwitch[] = {"TEN_GestureStandingPistolRifleSwitch","Gesture"};
-			TEN_GestureStandingPistolLauncherSwitch[] = {"TEN_GestureStandingPistolLauncherSwitch","Gesture"};
-			TEN_GestureStandingLauncherRifleSwitch[] = {"TEN_GestureStandingLauncherRifleSwitch","Gesture"};
-			TEN_GestureStandingLauncherPistolSwitch[] = {"TEN_GestureStandingLauncherPistolSwitch","Gesture"};
-
-			TEN_GestureStandingRiflePistolSwitchEnd[] = {"TEN_GestureStandingRiflePistolSwitchEnd","Gesture"};
-			TEN_GestureStandingRifleLauncherSwitchEnd[] = {"TEN_GestureStandingRifleLauncherSwitchEnd","Gesture"};
-			TEN_GestureStandingPistolRifleSwitchEnd[] = {"TEN_GestureStandingPistolRifleSwitchEnd","Gesture"};
-			TEN_GestureStandingPistolLauncherSwitchEnd[] = {"TEN_GestureStandingPistolLauncherSwitchEnd","Gesture"};
-			TEN_GestureStandingLauncherRifleSwitchEnd[] = {"TEN_GestureStandingLauncherRifleSwitchEnd","Gesture"};
-			TEN_GestureStandingLauncherPistolSwitchEnd[] = {"TEN_GestureStandingLauncherPistolSwitchEnd","Gesture"};
-		};
-
+		TEN_GestureStandingRiflePistolSwitchEnd[]    = {"TEN_GestureStandingRiflePistolSwitchEnd","Gesture"};
+		TEN_GestureStandingRifleLauncherSwitchEnd[]  = {"TEN_GestureStandingRifleLauncherSwitchEnd","Gesture"};
+		TEN_GestureStandingPistolRifleSwitchEnd[]    = {"TEN_GestureStandingPistolRifleSwitchEnd","Gesture"};
+		TEN_GestureStandingPistolLauncherSwitchEnd[] = {"TEN_GestureStandingPistolLauncherSwitchEnd","Gesture"};
+		TEN_GestureStandingLauncherRifleSwitchEnd[]  = {"TEN_GestureStandingLauncherRifleSwitchEnd","Gesture"};
+		TEN_GestureStandingLauncherPistolSwitchEnd[] = {"TEN_GestureStandingLauncherPistolSwitchEnd","Gesture"};
 	};
 };
 
@@ -241,7 +241,5 @@ class CfgGesturesMale {
 			leftHandIKCurve[] = {};
 			leftHandIKEnd = 0;
 		};
-
 	};
-
 };
