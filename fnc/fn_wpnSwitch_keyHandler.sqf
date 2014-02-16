@@ -1,8 +1,22 @@
+/*
+	Author: Sniperwolf572
+
+	Description:
+		Handles the keybinds for Use Action 17 and Use Action 18
+
+	Parameter(s):
+		None
+
+	Returns:
+		Nothing
+*/
+
 private ["_toHandgun", "_toLauncher", "_unit", "_canSwitch", "_stance", "_isSwitch", "_type"];
 
 while {true} do {
 
-	// Listen for the input actions
+	// Listen for the input actions. Done this way so the switch is responsive, allows for any keybind that
+	// can be mapped and  avoids custom code for detecting the mouse keys and key combos
 	waitUntil {
 		_toHandgun = inputaction "User17";
 		_toLauncher = inputaction "User18";

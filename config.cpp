@@ -4,34 +4,28 @@ class CfgPatches {
 		units[] = {};
 		weapons[] = {};
 		requiredAddons[] = {};
-		version = "1.4.2";
+		version = "1.4.4";
 		author[]= {"Sniperwolf572", "Deadfast"};
 		authorUrl = "https://twitter.com/tenga6";
 	};
 
 };
 
-class CfgFunctions
-{
-	class TEN
-	{
+class CfgFunctions {
+
+	class TEN {
+
 		tag = "TEN";
 
-		class switchWeaponsWhileMoving
-		{
+		class switchWeaponsWhileMoving {
+
 			file = "x\TEN\addons\TEN_switchWeaponsWhileMoving\fnc";
 			
-			class wpnSwitch_keyHandler
-			{
-			};
-			class wpnSwitch_determineSwitch
-			{
-			};
-			class wpnSwitch_performSwitch
-			{
-			};
-			class wpnSwitch_init
-			{
+			class wpnSwitch_keyHandler {};
+			class wpnSwitch_determineSwitch {};
+			class wpnSwitch_performSwitch {};
+			class wpnSwitch_netSwitch {};
+			class wpnSwitch_init {
 				postInit = 1;
 			};
 		};

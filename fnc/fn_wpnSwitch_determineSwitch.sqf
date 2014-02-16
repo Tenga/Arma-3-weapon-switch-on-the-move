@@ -1,3 +1,17 @@
+/*
+	Author: Sniperwolf572
+
+	Description:
+		Determines and triggers the weapon switch with movement enabled depending on the type of switch provided
+
+	Parameter(s):
+		0: OBJECT - the unit that will perform the switch (Should be player for now)
+		1: STRING - Type of switch to do, should be "handgun" or "launcher"
+
+	Returns:
+		Nothing
+*/
+
 private ["_unit", "_type", "_currentWeapon", "_handgun", "_rifle", "_launcher", "_performingSwitch", "_rifleToHandgun", "_rifleToLauncher", "_handgunToRifle", "_handgunToLauncher", "_launcherToHandgun", "_launcherToRifle", "_switchDirection", "_nextWeapon"];
 
 _unit = _this select 0;
