@@ -3,7 +3,7 @@ class CfgPatches {
 	class TEN_switchWeaponsWhileMoving {
 		units[] = {};
 		weapons[] = {};
-		requiredAddons[] = {};
+		requiredAddons[] = {"A3_Anims_F", "A3_Anims_F_Config_Sdr"};
 		version = "1.4.4";
 		author[]= {"Sniperwolf572", "Deadfast"};
 		authorUrl = "https://twitter.com/tenga6";

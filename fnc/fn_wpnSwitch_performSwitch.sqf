@@ -21,52 +21,65 @@ _stance = stance _unit;
 _nextWeapon = _switchData select 3;
 _rifle = primaryWeapon _unit;
 
-// Do the regular weapon switch	in prone
-if(_stance == "PRONE") then {
+switch true do {
 
-	_unit selectWeapon _nextWeapon;
+	// Do the regular weapon switch	in prone
+	case (_stance == "PRONE") : {
+		_unit selectWeapon _nextWeapon;
+	};
 
-} else {
+	// Regular weapon switch in FFV
+	case (!(vehicle _unit isEqualTo player)) : {
 
-	// If he's not laying on the floor being a lazy bum, he can switch weapons via gestures
-	_startGesture = _switchData select 0;
-	_endGesture = _switchData select 1;
-	_delay = _switchData select 2;
-	_cancellingCrouch = _switchData select 4;
-	_launcher = secondaryWeapon _unit;
-	_switchMove = "";
+		// No switching to launchers in FFV
+		if(!(_nextWeapon isEqualTo (secondaryWeapon _unit))) then {
+			_unit selectWeapon _nextWeapon;
+		};
 
-	// Switching logic
-	_unit playActionNow _startGesture;
+	};
 
-	// Prevent launcher firing
-	_preventFiring = [format ["TEN_wpnSwitch_noFiring_%1", diag_frameno], "onEachFrame", {
+	default {
 
-		// TODO: Replace player reference with unit reference once we can pass params to the stacked event handlers
-		player setWeaponReloadingTime [gunner player, secondaryWeapon player, 1]; 
-		
-	}] call BIS_fnc_addStackedEventHandler;
+		// If he's not laying on the floor being a lazy bum, he can switch weapons via gestures
+		_startGesture = _switchData select 0;
+		_endGesture = _switchData select 1;
+		_delay = _switchData select 2;
+		_cancellingCrouch = _switchData select 4;
+		_launcher = secondaryWeapon _unit;
+		_switchMove = "";
 
-	// Wait until the first part of the switch is done
-	sleep _delay;
+		// Switching logic
+		_unit playActionNow _startGesture;
 
-	// We need to know the stance again after the delay in case it changed
-	_stance = stance _unit;
+		// Prevent launcher firing
+		_preventFiring = [format ["TEN_wpnSwitch_noFiring_%1", diag_frameno], "onEachFrame", {
 
-	// Workaround - Switchmoving to "" when the launcher is selected, repeats the transition
-	if(_nextWeapon == _launcher) then { _switchMove = "amovpercmstpsraswlnrdnon"; };
+			// TODO: Replace player reference with unit reference once we can pass params to the stacked event handlers
+			player setWeaponReloadingTime [gunner player, secondaryWeapon player, 1]; 
+			
+		}] call BIS_fnc_addStackedEventHandler;
 
-	// Workaround - Use the crouching default animation if we're crouching, switchmoving to "" will stand us up
-	if(_stance == "CROUCH") then { _switchMove = _cancellingCrouch;};
+		// Wait until the first part of the switch is done
+		sleep _delay;
 
-	// And finalise the switch, execute globally to prevent sliding and jerking
-	[[_unit, _switchMove, _nextWeapon], "TEN_fnc_wpnSwitch_netSwitch"] call BIS_fnc_MP;
+		// We need to know the stance again after the delay in case it changed
+		_stance = stance _unit;
 
-	_unit playActionNow _endGesture;
+		// Workaround - Switchmoving to "" when the launcher is selected, repeats the transition
+		if(_nextWeapon == _launcher) then { _switchMove = "amovpercmstpsraswlnrdnon"; };
 
-	// Re-enable launcher firing, spawning this so it does not block the next switch and break the interrupt functionality
-	[_preventFiring] spawn {
-		sleep 0.8;
-		[_this select 0, "onEachFrame"] call BIS_fnc_removeStackedEventHandler;
+		// Workaround - Use the crouching default animation if we're crouching, switchmoving to "" will stand us up
+		if(_stance == "CROUCH") then { _switchMove = _cancellingCrouch;};
+
+		// And finalise the switch, execute globally to prevent sliding and jerking
+		[[_unit, _switchMove, _nextWeapon], "TEN_fnc_wpnSwitch_netSwitch"] call BIS_fnc_MP;
+
+		_unit playActionNow _endGesture;
+
+		// Re-enable launcher firing, spawning this so it does not block the next switch and break the interrupt functionality
+		[_preventFiring] spawn {
+			sleep 0.8;
+			[_this select 0, "onEachFrame"] call BIS_fnc_removeStackedEventHandler;
+		};
 	};
 };
