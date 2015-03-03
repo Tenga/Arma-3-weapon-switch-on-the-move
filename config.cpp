@@ -4,7 +4,7 @@ class CfgPatches {
 		units[] = {};
 		weapons[] = {};
 		requiredAddons[] = {"A3_Anims_F", "A3_Anims_F_Config_Sdr"};
-		version = "1.4.4";
+		version = "1.4.5";
 		author[]= {"Sniperwolf572", "Deadfast"};
 		authorUrl = "https://twitter.com/tenga6";
 	};
